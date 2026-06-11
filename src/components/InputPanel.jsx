@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react'
-import { MODELS } from '../App.jsx'
+import { MODELS } from '../models.js'
 
 const ACCEPTED_TYPES = ['image/png', 'image/jpeg', 'image/gif', 'image/webp']
 
