@@ -1,0 +1,3 @@
+# Copy this file to .dev.vars (not committed to git)
+# then add your Anthropic API key
+ANTHROPIC_API_KEY=sk-ant-...
