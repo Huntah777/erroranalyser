@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react'
+import { MODELS } from '../App.jsx'
 
 const ACCEPTED_TYPES = ['image/png', 'image/jpeg', 'image/gif', 'image/webp']
 
@@ -24,6 +25,8 @@ export default function InputPanel({
   onClear,
   loading,
   hasContent,
+  model,
+  onModelChange,
 }) {
   const [dragging, setDragging] = useState(false)
   const fileInputRef = useRef(null)
@@ -137,7 +140,7 @@ export default function InputPanel({
       </div>
 
       {/* Actions */}
-      <div className="flex items-center gap-3">
+      <div className="flex flex-wrap items-center gap-3">
         <button
           onClick={onAnalyse}
           disabled={!hasContent || loading}
@@ -158,6 +161,29 @@ export default function InputPanel({
             'Analyse'
           )}
         </button>
+
+        {/* Model selector */}
+        <div className="flex rounded-lg border border-zinc-700 overflow-hidden">
+          {MODELS.map(m => (
+            <button
+              key={m.id}
+              onClick={() => onModelChange(m.id)}
+              disabled={loading}
+              title={m.desc}
+              className={`
+                px-3 py-2 text-xs font-medium transition-colors border-r border-zinc-700 last:border-r-0
+                ${model === m.id
+                  ? 'bg-zinc-700 text-zinc-100'
+                  : 'bg-zinc-900 text-zinc-500 hover:bg-zinc-800 hover:text-zinc-300'
+                }
+                ${loading ? 'cursor-not-allowed opacity-50' : ''}
+              `}
+            >
+              <span className="block leading-none">{m.label}</span>
+              <span className="block text-zinc-600 text-[10px] mt-0.5">{m.desc}</span>
+            </button>
+          ))}
+        </div>
 
         {hasContent && !loading && (
           <button

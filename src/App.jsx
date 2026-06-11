@@ -2,12 +2,19 @@ import { useState, useRef } from 'react'
 import InputPanel from './components/InputPanel.jsx'
 import AnalysisResult from './components/AnalysisResult.jsx'
 
+export const MODELS = [
+  { id: 'claude-opus-4-8',         label: 'Opus 4.8',    desc: 'Most thorough',  thinking: true },
+  { id: 'claude-sonnet-4-6',       label: 'Sonnet 4.6',  desc: 'Balanced',       thinking: false },
+  { id: 'claude-haiku-4-5-20251001', label: 'Haiku 4.5', desc: 'Fastest',        thinking: false },
+]
+
 export default function App() {
   const [logText, setLogText] = useState('')
   const [image, setImage] = useState(null) // { base64, mediaType, previewUrl }
   const [analysis, setAnalysis] = useState(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
+  const [model, setModel] = useState('claude-opus-4-8')
   const resultsRef = useRef(null)
 
   async function handleAnalyse() {
@@ -25,6 +32,7 @@ export default function App() {
           text: logText.trim() || undefined,
           imageBase64: image?.base64 || undefined,
           imageMediaType: image?.mediaType || undefined,
+          model,
         }),
       })
 
@@ -62,7 +70,7 @@ export default function App() {
           </div>
           <div>
             <h1 className="text-base font-semibold text-zinc-100 leading-none">Error Analyser</h1>
-            <p className="text-xs text-zinc-500 mt-0.5">Powered by Claude Opus</p>
+            <p className="text-xs text-zinc-500 mt-0.5">Powered by Claude</p>
           </div>
         </div>
         <div className="text-xs text-zinc-600 hidden sm:block">
@@ -80,6 +88,8 @@ export default function App() {
           onClear={handleClear}
           loading={loading}
           hasContent={!!(logText.trim() || image)}
+          model={model}
+          onModelChange={setModel}
         />
 
         {error && (
@@ -99,7 +109,7 @@ export default function App() {
                 />
               ))}
             </div>
-            <p className="text-sm">Analysing with Claude Opus...</p>
+            <p className="text-sm">Analysing with {MODELS.find(m => m.id === model)?.label ?? model}...</p>
           </div>
         )}
 

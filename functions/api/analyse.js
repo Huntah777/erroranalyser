@@ -72,6 +72,15 @@ export async function onRequestPost(context) {
   try {
     const body = await request.json();
     const { text, imageBase64, imageMediaType } = body;
+    const model = body.model || 'claude-opus-4-8';
+    const SUPPORTED_MODELS = ['claude-opus-4-8', 'claude-sonnet-4-6', 'claude-haiku-4-5-20251001'];
+    if (!SUPPORTED_MODELS.includes(model)) {
+      return new Response(JSON.stringify({ error: `Unsupported model: ${model}` }), {
+        status: 400,
+        headers: JSON_HEADERS,
+      });
+    }
+    const supportsThinking = model.startsWith('claude-opus-');
 
     if (!text && !imageBase64) {
       return new Response(JSON.stringify({ error: 'Provide log text or a screenshot.' }), {
@@ -117,9 +126,9 @@ export async function onRequestPost(context) {
         'anthropic-version': '2023-06-01',
       },
       body: JSON.stringify({
-        model: 'claude-opus-4-8',
+        model,
         max_tokens: 4096,
-        thinking: { type: 'adaptive' },
+        ...(supportsThinking && { thinking: { type: 'adaptive' } }),
         system: SYSTEM_PROMPT,
         output_config: {
           format: { type: 'json_schema', schema: RESPONSE_SCHEMA },
